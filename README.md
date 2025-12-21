@@ -61,4 +61,59 @@ The application follows a **client–server architecture**:
 ---
 
 ## 📂 Project Structure
+project/
+├── client/ # React frontend
+├── server/ # Node.js backend
+├── .gitignore
+├── README.md
 
+
+---
+
+## ⚙️ Installation & Setup
+
+### 1️⃣ Clone the repository
+bash
+git clone https://github.com/Manikanta-2006/agri-transport.git
+cd agri-transport
+
+2️⃣ Install frontend dependencies
+cd client
+npm install
+npm start
+
+3️⃣ Install backend dependencies
+cd server
+npm install
+npm start
+
+
+⚠️ Make sure MongoDB is running and environment variables are configured.
+
+🔐 User Roles
+
+Farmer: Adds and manages agricultural produce
+
+Buyer: Orders products and makes payments
+
+Delivery Agent: Handles delivery of ordered products
+
+🎯 Project Objective
+
+The main objective of this project is to provide a transparent, efficient, and user-friendly digital platform for agricultural produce trading and delivery management using modern web technologies.
+
+📌 Future Enhancements
+
+Mobile application support
+
+Real-time GPS tracking for deliveries
+
+Notification system (SMS/Email)
+
+Admin dashboard
+
+Multi-language support
+
+📄 License
+
+This project is developed for academic purposes as part of course requirements.
