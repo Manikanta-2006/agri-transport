@@ -117,3 +117,50 @@ Multi-language support
 📄 License
 
 This project is developed for academic purposes as part of course requirements.
+
+## 🧪 QA & Testing
+
+This project was tested to validate the functionality and reliability of the major user workflows.
+
+### Functional Testing
+
+* User registration and login
+* Role-based access for Farmer, Buyer and Delivery Agent
+* Agricultural product listing and management
+* Product browsing and ordering
+* Order status management
+* Delivery request and status updates
+* Form validation and error handling
+
+### Test Scenarios
+
+* Valid and invalid login credentials
+* Empty and invalid form inputs
+* Unauthorized access to restricted functionality
+* Valid and invalid product details
+* Order creation and validation
+* API success and error responses
+
+### API Testing
+
+REST APIs were tested using **Postman** by validating:
+
+* HTTP status codes
+* Request and response data
+* Required fields
+* Valid and invalid inputs
+* Authentication and authorization scenarios
+
+### Automation Testing
+
+UI automation tests are being developed using **Playwright with JavaScript** for critical application workflows such as login and navigation.
+
+### Testing Approach
+
+* Functional Testing
+* Positive Testing
+* Negative Testing
+* Regression Testing
+* API Testing
+* UI Automation
+
