@@ -5,18 +5,24 @@ const jwt = require('jsonwebtoken');
 exports.registerUser = async (req, res) => {
     const { name, email, password, role } = req.body;
 
+    if (!name || !email || !password) {
+        return res.status(400).json({ msg: 'Please provide all required fields' });
+    }
+
+    const normalizedEmail = email.trim().toLowerCase();
+
     try {
-        let user = await User.findOne({ email });
+        let user = await User.findOne({ email: normalizedEmail });
 
         if (user) {
             return res.status(400).json({ msg: 'User already exists' });
         }
 
         user = new User({
-            name,
-            email,
+            name: name.trim(),
+            email: normalizedEmail,
             password,
-            role: role || 'farmer'
+            role: role ? role.toLowerCase() : 'farmer'
         });
 
         const salt = await bcrypt.genSalt(10);
@@ -37,7 +43,10 @@ exports.registerUser = async (req, res) => {
             { expiresIn: 360000 },
             (err, token) => {
                 if (err) throw err;
-                res.json({ token });
+                res.json({
+                    token,
+                    user: { id: user.id, name: user.name, email: user.email, role: user.role }
+                });
             }
         );
     } catch (err) {
@@ -49,8 +58,14 @@ exports.registerUser = async (req, res) => {
 exports.loginUser = async (req, res) => {
     const { email, password } = req.body;
 
+    if (!email || !password) {
+        return res.status(400).json({ msg: 'Please enter both email and password' });
+    }
+
+    const normalizedEmail = email.trim().toLowerCase();
+
     try {
-        let user = await User.findOne({ email });
+        let user = await User.findOne({ email: normalizedEmail });
 
         if (!user) {
             return res.status(400).json({ msg: 'Invalid Credentials' });
@@ -63,8 +78,11 @@ exports.loginUser = async (req, res) => {
         }
 
         // Verify role if provided
-        if (req.body.role && req.body.role !== user.role) {
-            return res.status(400).json({ msg: 'Unauthorized: Incorrect Role' });
+        if (req.body.role && req.body.role.toLowerCase() !== user.role.toLowerCase()) {
+            return res.status(400).json({
+                msg: `This account is registered as a ${user.role}. Please log in through the ${user.role} portal.`,
+                actualRole: user.role
+            });
         }
 
         const payload = {
