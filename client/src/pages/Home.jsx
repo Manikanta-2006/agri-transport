@@ -2,6 +2,18 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 const Home = () => {
+    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+    const role = typeof window !== 'undefined' ? localStorage.getItem('userRole') : null;
+    const userName = typeof window !== 'undefined' ? localStorage.getItem('userName') : null;
+
+    const dashboardPath = role === 'farmer'
+        ? '/farmer-dashboard'
+        : role === 'agent'
+        ? '/agent-dashboard'
+        : role === 'buyer'
+        ? '/buyer-dashboard'
+        : '/role-selection';
+
     return (
         <div className="min-h-screen bg-[#F3F8F2] font-sans text-slate-800">
 
@@ -12,12 +24,24 @@ const Home = () => {
                         <span className="text-4xl">🌾</span>
                         <h1 className="text-2xl md:text-3xl font-bold text-white tracking-wide drop-shadow-md">Agri Transport</h1>
                     </div>
-                    <Link
-                        to="/role-selection"
-                        className="bg-white/20 backdrop-blur-md border border-white/40 text-white px-8 py-3 rounded-full font-bold hover:bg-white hover:text-green-800 transition-all duration-300 shadow-lg text-lg"
-                    >
-                        Login
-                    </Link>
+                    {token ? (
+                        <div className="flex items-center gap-3">
+                            <span className="text-white/90 text-sm hidden sm:inline">Hi, {userName || 'User'}</span>
+                            <Link
+                                to={dashboardPath}
+                                className="bg-green-600 text-white px-6 py-2.5 rounded-full font-bold hover:bg-green-500 transition-all duration-300 shadow-lg text-base"
+                            >
+                                Dashboard
+                            </Link>
+                        </div>
+                    ) : (
+                        <Link
+                            to="/role-selection"
+                            className="bg-white/20 backdrop-blur-md border border-white/40 text-white px-8 py-3 rounded-full font-bold hover:bg-white hover:text-green-800 transition-all duration-300 shadow-lg text-lg"
+                        >
+                            Login
+                        </Link>
+                    )}
                 </div>
             </nav>
 
@@ -53,10 +77,10 @@ const Home = () => {
                     {/* Only Get Started Button */}
                     <div className="flex gap-4">
                         <Link
-                            to="/role-selection"
+                            to={token ? dashboardPath : '/role-selection'}
                             className="bg-green-600 text-white px-10 py-5 rounded-2xl font-bold text-xl hover:bg-green-500 hover:scale-105 transition-all duration-300 shadow-2xl shadow-green-900/50"
                         >
-                            Get Started
+                            {token ? 'Open Dashboard' : 'Get Started'}
                         </Link>
                     </div>
                 </div>

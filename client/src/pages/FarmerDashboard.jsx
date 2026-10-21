@@ -1,9 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { API_BASE_URL } from '../config/api';
 
 const FarmerDashboard = () => {
+    const navigate = useNavigate();
     const userName = localStorage.getItem('userName') || 'Farmer';
+
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('userName');
+        localStorage.removeItem('userRole');
+        navigate('/');
+    };
 
     const [listings, setListings] = useState([]);
     const [showModal, setShowModal] = useState(false);
@@ -24,7 +33,7 @@ const FarmerDashboard = () => {
                     'x-auth-token': token
                 }
             };
-            const res = await axios.get('http://localhost:5001/api/listings', config);
+            const res = await axios.get(`${API_BASE_URL}/api/listings`, config);
             setListings(res.data);
         } catch (err) {
             console.error('Error fetching listings:', err);
@@ -48,7 +57,7 @@ const FarmerDashboard = () => {
                 }
             };
             const body = JSON.stringify({ crop, quantity, destination, price });
-            await axios.post('http://localhost:5001/api/listings', body, config);
+            await axios.post(`${API_BASE_URL}/api/listings`, body, config);
             setShowModal(false);
             setFormData({ crop: '', quantity: '', destination: '', price: '' });
             fetchListings(); // Refresh listings
@@ -72,7 +81,7 @@ const FarmerDashboard = () => {
                         <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center text-lg">
                             👨‍🌾
                         </div>
-                        <Link to="/" className="text-sm bg-green-700 px-3 py-1 rounded hover:bg-green-800 transition">Logout</Link>
+                        <button onClick={handleLogout} className="text-sm bg-green-700 px-3 py-1 rounded hover:bg-green-800 transition cursor-pointer">Logout</button>
                     </div>
                 </div>
             </header>

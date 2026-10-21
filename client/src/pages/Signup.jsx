@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
+import { API_BASE_URL } from '../config/api';
 
 const Signup = () => {
     const location = useLocation();
@@ -18,28 +19,50 @@ const Signup = () => {
     const { name, email, password, confirmPassword, role } = formData;
     const navigate = useNavigate();
 
-    const onChange = e => setFormData({ ...formData, [e.target.name]: e.target.value });
+    const [errorMsg, setErrorMsg] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+
+    const onChange = e => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+        if (errorMsg) setErrorMsg('');
+    };
 
     const onSubmit = async e => {
         e.preventDefault();
+        setErrorMsg('');
+
         if (password !== confirmPassword) {
+            setErrorMsg('Passwords do not match');
             alert('Passwords do not match');
             return;
         }
+
+        setIsLoading(true);
         try {
             const config = {
                 headers: {
                     'Content-Type': 'application/json'
                 }
             };
-            const body = JSON.stringify({ name, email, password, role });
-            const res = await axios.post('http://localhost:5001/api/auth/register', body, config);
+            const body = JSON.stringify({
+                name: name.trim(),
+                email: email.trim().toLowerCase(),
+                password,
+                role
+            });
+            const res = await axios.post(`${API_BASE_URL}/api/auth/register`, body, config);
             console.log(res.data);
-            alert('Registration Successful');
-            navigate('/login');
+            alert('Registration Successful! Please log in.');
+            navigate(`/login?role=${role}`);
         } catch (err) {
-            console.error(err.response.data);
-            alert('Registration Failed');
+            console.error(err.response?.data);
+            const msg = !err.response
+                ? 'Unable to connect to backend server. Please verify the server is running on port 5001.'
+                : (err.response.data?.msg || 'Registration Failed');
+            setErrorMsg(msg);
+            alert(msg);
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -60,6 +83,12 @@ const Signup = () => {
                             Join the agricultural revolution today
                         </p>
                     </div>
+
+                    {errorMsg && (
+                        <div className="mb-4 p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm text-center">
+                            {errorMsg}
+                        </div>
+                    )}
 
                     {/* Form */}
                     <form onSubmit={onSubmit} className="space-y-4">
@@ -126,9 +155,10 @@ const Signup = () => {
                         </div>
                         <button
                             type="submit"
-                            className="w-full bg-slate-900 text-white py-4 rounded-xl font-bold hover:bg-green-600 transition-colors duration-300 shadow-lg mt-6"
+                            disabled={isLoading}
+                            className="w-full bg-slate-900 text-white py-4 rounded-xl font-bold hover:bg-green-600 transition-colors duration-300 shadow-lg mt-6 disabled:opacity-60 cursor-pointer"
                         >
-                            Create Account
+                            {isLoading ? 'Creating Account...' : 'Create Account'}
                         </button>
                     </form>
 
@@ -137,7 +167,7 @@ const Signup = () => {
                         <p className="text-slate-600 text-sm">
                             Already have an account?{' '}
                             <Link
-                                to="/login"
+                                to={`/login${role ? `?role=${role}` : ''}`}
                                 className="text-green-600 font-semibold hover:underline"
                             >
                                 Login

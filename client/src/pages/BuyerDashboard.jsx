@@ -1,9 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { API_BASE_URL } from '../config/api';
 
 const BuyerDashboard = () => {
+    const navigate = useNavigate();
     const userName = localStorage.getItem('userName') || 'Buyer';
+
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('userName');
+        localStorage.removeItem('userRole');
+        navigate('/');
+    };
+
     const [produce, setProduce] = useState([]);
     const [myOrders, setMyOrders] = useState([]);
 
@@ -25,7 +35,7 @@ const BuyerDashboard = () => {
         try {
             const token = localStorage.getItem('token');
             const config = { headers: { 'x-auth-token': token } };
-            const res = await axios.get('http://localhost:5001/api/listings/available', config);
+            const res = await axios.get(`${API_BASE_URL}/api/listings/available`, config);
             setProduce(res.data);
         } catch (err) {
             console.error('Error fetching produce:', err);
@@ -36,7 +46,7 @@ const BuyerDashboard = () => {
         try {
             const token = localStorage.getItem('token');
             const config = { headers: { 'x-auth-token': token } };
-            const res = await axios.get('http://localhost:5001/api/listings/my-orders', config);
+            const res = await axios.get(`${API_BASE_URL}/api/listings/my-orders`, config);
             setMyOrders(res.data);
         } catch (err) {
             console.error('Error fetching orders:', err);
@@ -131,7 +141,7 @@ const BuyerDashboard = () => {
             }
 
             const body = JSON.stringify({ items: itemsToBuy, deliveryDetails: checkoutData });
-            const res = await axios.post('http://localhost:5001/api/listings/purchase-cart', body, config);
+            const res = await axios.post(`${API_BASE_URL}/api/listings/purchase-cart`, body, config);
 
             if (res.data.success) {
                 alert('Order Placed Successfully! Payment Verified.');
@@ -155,7 +165,7 @@ const BuyerDashboard = () => {
         try {
             const token = localStorage.getItem('token');
             const config = { headers: { 'x-auth-token': token } };
-            await axios.put(`http://localhost:5001/api/listings/confirm/${id}`, {}, config);
+            await axios.put(`${API_BASE_URL}/api/listings/confirm/${id}`, {}, config);
             alert('Order Confirmed!');
             fetchMyOrders();
         } catch (err) {
@@ -180,7 +190,7 @@ const BuyerDashboard = () => {
                             🛒 <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full font-bold">{cart.length}</span>
                         </button>
                         <span className="font-medium hidden md:inline">Welcome, {userName}</span>
-                        <Link to="/" className="text-sm bg-orange-700 px-3 py-1 rounded hover:bg-orange-800 transition">Logout</Link>
+                        <button onClick={handleLogout} className="text-sm bg-orange-700 px-3 py-1 rounded hover:bg-orange-800 transition cursor-pointer">Logout</button>
                     </div>
                 </div>
             </header>

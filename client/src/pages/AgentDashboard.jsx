@@ -1,9 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { API_BASE_URL } from '../config/api';
 
 const AgentDashboard = () => {
+    const navigate = useNavigate();
     const userName = localStorage.getItem('userName') || 'Agent';
+
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('userName');
+        localStorage.removeItem('userRole');
+        navigate('/');
+    };
+
     const [availableJobs, setAvailableJobs] = useState([]);
 
     const fetchJobs = async () => {
@@ -14,7 +24,7 @@ const AgentDashboard = () => {
                     'x-auth-token': token
                 }
             };
-            const res = await axios.get('http://localhost:5001/api/listings/agent-jobs', config);
+            const res = await axios.get(`${API_BASE_URL}/api/listings/agent-jobs`, config);
             setAvailableJobs(res.data);
         } catch (err) {
             console.error('Error fetching jobs:', err);
@@ -29,7 +39,7 @@ const AgentDashboard = () => {
                     'x-auth-token': token
                 }
             };
-            await axios.put(`http://localhost:5001/api/listings/accept/${id}`, {}, config);
+            await axios.put(`${API_BASE_URL}/api/listings/accept/${id}`, {}, config);
             alert('Delivery Accepted! Item is now In Transit.');
             fetchJobs();
         } catch (err) {
@@ -55,7 +65,7 @@ const AgentDashboard = () => {
                         <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center text-lg">
                             👮‍♂️
                         </div>
-                        <Link to="/" className="text-sm bg-blue-700 px-3 py-1 rounded hover:bg-blue-800 transition">Logout</Link>
+                        <button onClick={handleLogout} className="text-sm bg-blue-700 px-3 py-1 rounded hover:bg-blue-800 transition cursor-pointer">Logout</button>
                     </div>
                 </div>
             </header>
