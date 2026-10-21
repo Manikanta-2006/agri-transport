@@ -1,5 +1,12 @@
 # 🌾 Agri Transport – Agricultural Produce Trading & Delivery System
 
+[![Live Deployment](https://img.shields.io/badge/Live_Demo-Render-46E3B7?style=for-the-badge&logo=render&logoColor=white)](https://agri-transport.onrender.com/)
+[![Deployment Status](https://img.shields.io/badge/Status-Live%20Online-brightgreen?style=for-the-badge)](https://agri-transport.onrender.com/)
+
+🚀 **Live Application URL:** [https://agri-transport.onrender.com/](https://agri-transport.onrender.com/)
+
+---
+
 Agri Transport is a web-based application designed to connect **farmers, buyers, and delivery agents** on a single digital platform. The system enables farmers to sell their agricultural produce directly, buyers to place orders and make online payments, and delivery agents to manage deliveries efficiently.
 
 ---
